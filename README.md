@@ -27,12 +27,12 @@ pip install pycryptodome
 ## 🔑 Usage
 ### Encrypt a File
 ```bash
-python encryptor.py --encrypt --file confidential.txt --output encrypted.dat
+python encryptor.py --encrypt --file confidential.txt --output encrypted.dat --password
 ```
 
 ### Decrypt a File
 ```bash
-python encryptor.py --decrypt --file encrypted.dat --output decrypted.txt
+python encryptor.py --decrypt --file encrypted.dat --output decrypted.txt --password
 ```
 
 ## 🔒 Security Considerations
