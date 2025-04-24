@@ -4,6 +4,8 @@ import hashlib
 import hmac
 import secrets
 import string
+import getpass
+import shutil
 from pathlib import Path
 from tqdm import tqdm
 from Crypto.Cipher import AES
@@ -158,6 +160,66 @@ def decrypt_directory(dir_path: str, output_path: str, password: str):
                 print(f"Error decrypting {file_path}: {str(e)}")
 
 
+def get_hidden_input(prompt: str) -> str:
+    """Gets hidden input for sensitive data like passwords."""
+    return getpass.getpass(prompt)
+
+
+def validate_path(path: str, is_directory: bool = False) -> tuple[bool, str]:
+    """Validates a file or directory path and provides suggestions."""
+    path = Path(path)
+    
+    if not path.exists():
+        # Check if parent directory exists
+        if path.parent.exists():
+            return True, f"Path will be created: {path}"
+        else:
+            return False, f"Parent directory does not exist: {path.parent}"
+    
+    if is_directory and not path.is_dir():
+        return False, f"Path exists but is not a directory: {path}"
+    
+    if not is_directory and path.is_dir():
+        return False, f"Path exists but is a directory: {path}"
+    
+    return True, "Path is valid"
+
+
+def show_help():
+    """Displays help information and examples."""
+    print("\n=== Help and Examples ===")
+    print("\n1. Encrypting a File:")
+    print("   - Enter the path to your file (e.g., ./documents/secret.txt)")
+    print("   - Enter where to save the encrypted file (e.g., ./encrypted/secret.enc)")
+    print("   - Enter a strong password")
+    
+    print("\n2. Decrypting a File:")
+    print("   - Enter the path to your encrypted file (e.g., ./encrypted/secret.enc)")
+    print("   - Enter where to save the decrypted file (e.g., ./decrypted/secret.txt)")
+    print("   - Enter the password used for encryption")
+    
+    print("\n3. Encrypting a Directory:")
+    print("   - Enter the path to your directory (e.g., ./documents/)")
+    print("   - Enter where to save encrypted files (e.g., ./encrypted/)")
+    print("   - Enter a strong password")
+    
+    print("\n4. Decrypting a Directory:")
+    print("   - Enter the path to your encrypted directory (e.g., ./encrypted/)")
+    print("   - Enter where to save decrypted files (e.g., ./decrypted/)")
+    print("   - Enter the password used for encryption")
+    
+    print("\n5. Generating a Key File:")
+    print("   - Enter where to save the key file (e.g., ./keys/encryption.key)")
+    
+    print("\nTips:")
+    print("- Use strong passwords with at least 12 characters")
+    print("- Keep your passwords and key files secure")
+    print("- Make backups of important files before encryption")
+    print("- Use relative paths for portability")
+    
+    input("\nPress Enter to continue...")
+
+
 def interactive_mode():
     """Provides an interactive command-line interface."""
     print("\n=== Secure File Encryption Utility ===")
@@ -166,53 +228,81 @@ def interactive_mode():
     print("3. Encrypt a directory")
     print("4. Decrypt a directory")
     print("5. Generate a key file")
-    print("6. Exit")
+    print("6. Show help and examples")
+    print("7. Exit")
     
     while True:
         try:
-            choice = input("\nEnter your choice (1-6): ").strip()
+            choice = input("\nEnter your choice (1-7): ").strip()
             
-            if choice == "6":
+            if choice == "7":
                 print("Goodbye!")
                 break
             
+            if choice == "6":
+                show_help()
+                continue
+            
             if choice in ["1", "2"]:
-                file_path = input("Enter the file path: ").strip()
-                output_path = input("Enter the output path: ").strip()
-                password = input("Enter the password: ").strip()
+                while True:
+                    file_path = input("Enter the file path: ").strip()
+                    is_valid, message = validate_path(file_path)
+                    print(message)
+                    if is_valid:
+                        break
                 
-                if not all([file_path, output_path, password]):
-                    print("Error: All fields are required")
-                    continue
+                while True:
+                    output_path = input("Enter the output path: ").strip()
+                    is_valid, message = validate_path(output_path)
+                    print(message)
+                    if is_valid:
+                        break
+                
+                password = get_hidden_input("Enter the password: ")
                 
                 if choice == "1":
+                    print("\nEncrypting file...")
                     encrypt_file(file_path, output_path, password)
                 else:
+                    print("\nDecrypting file...")
                     decrypt_file(file_path, output_path, password)
             
             elif choice in ["3", "4"]:
-                dir_path = input("Enter the directory path: ").strip()
-                output_path = input("Enter the output path: ").strip()
-                password = input("Enter the password: ").strip()
+                while True:
+                    dir_path = input("Enter the directory path: ").strip()
+                    is_valid, message = validate_path(dir_path, is_directory=True)
+                    print(message)
+                    if is_valid:
+                        break
                 
-                if not all([dir_path, output_path, password]):
-                    print("Error: All fields are required")
-                    continue
+                while True:
+                    output_path = input("Enter the output path: ").strip()
+                    is_valid, message = validate_path(output_path, is_directory=True)
+                    print(message)
+                    if is_valid:
+                        break
+                
+                password = get_hidden_input("Enter the password: ")
                 
                 if choice == "3":
+                    print("\nEncrypting directory...")
                     encrypt_directory(dir_path, output_path, password)
                 else:
+                    print("\nDecrypting directory...")
                     decrypt_directory(dir_path, output_path, password)
             
             elif choice == "5":
-                output_path = input("Enter the output path for the key file: ").strip()
-                if not output_path:
-                    print("Error: Output path is required")
-                    continue
+                while True:
+                    output_path = input("Enter the output path for the key file: ").strip()
+                    is_valid, message = validate_path(output_path)
+                    print(message)
+                    if is_valid:
+                        break
+                print("\nGenerating key file...")
                 generate_key_file(output_path)
             
             else:
-                print("Invalid choice. Please enter a number between 1 and 6.")
+                print("Invalid choice. Please enter a number between 1 and 7.")
         
         except KeyboardInterrupt:
             print("\nOperation cancelled by user.")

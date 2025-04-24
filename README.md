@@ -7,7 +7,11 @@ This project is a Python-based utility designed to encrypt and decrypt files sec
 - **AES-256 Encryption**: Uses the Advanced Encryption Standard (AES) with a 256-bit key for strong encryption.
 - **Secure Key Management**: Generates and stores encryption keys securely.
 - **Command-Line Interface (CLI)**: Easily encrypt and decrypt files using simple commands.
-- **Interactive Mode**: User-friendly command-line interface for easy operation.
+- **Interactive Mode**: User-friendly command-line interface with:
+  - Hidden password input
+  - Path validation and suggestions
+  - Built-in help system
+  - Progress feedback
 - **Cross-Platform Support**: Works on Windows, Linux, and macOS.
 - **Directory Encryption**: Encrypt or decrypt entire directories with a single command.
 - **Password Strength Checker**: Ensures strong passwords are used for encryption.
@@ -19,6 +23,7 @@ This project is a Python-based utility designed to encrypt and decrypt files sec
 - **PyCryptodome** (for AES encryption)
 - **Argparse** (for CLI argument parsing)
 - **OS & SYS** (for file handling and security features)
+- **Getpass** (for secure password input)
 - **TQDM** (for progress bars)
 - **Pathlib** (for cross-platform path handling)
 
@@ -44,7 +49,14 @@ The interactive mode provides a menu-driven interface with the following options
 3. Encrypt a directory
 4. Decrypt a directory
 5. Generate a key file
-6. Exit
+6. Show help and examples
+7. Exit
+
+Features of the interactive mode:
+- **Secure Password Input**: Passwords are hidden while typing
+- **Path Validation**: Checks if paths exist and provides helpful suggestions
+- **Built-in Help**: Detailed examples and usage tips
+- **Progress Feedback**: Shows operation progress and status
 
 ### Command Line Mode
 #### Encrypt a File
@@ -78,11 +90,7 @@ python encryptor.py --generate-key --output keyfile.key
 - Ensure encryption keys are stored securely and not hardcoded.
 - Use strong passwords when deriving keys from user input.
 - Implement proper exception handling to prevent data corruption.
-- Passwords must be at least 12 characters long and contain:
-  - Uppercase letters
-  - Lowercase letters
-  - Numbers
-  - Special characters
+- Passwords are hidden during input for security.
 
 ## 🤝 Contributions
 Contributions are welcome! Feel free to fork the repository and submit pull requests.
