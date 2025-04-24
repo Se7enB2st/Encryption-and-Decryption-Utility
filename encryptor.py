@@ -158,18 +158,85 @@ def decrypt_directory(dir_path: str, output_path: str, password: str):
                 print(f"Error decrypting {file_path}: {str(e)}")
 
 
+def interactive_mode():
+    """Provides an interactive command-line interface."""
+    print("\n=== Secure File Encryption Utility ===")
+    print("1. Encrypt a file")
+    print("2. Decrypt a file")
+    print("3. Encrypt a directory")
+    print("4. Decrypt a directory")
+    print("5. Generate a key file")
+    print("6. Exit")
+    
+    while True:
+        try:
+            choice = input("\nEnter your choice (1-6): ").strip()
+            
+            if choice == "6":
+                print("Goodbye!")
+                break
+            
+            if choice in ["1", "2"]:
+                file_path = input("Enter the file path: ").strip()
+                output_path = input("Enter the output path: ").strip()
+                password = input("Enter the password: ").strip()
+                
+                if not all([file_path, output_path, password]):
+                    print("Error: All fields are required")
+                    continue
+                
+                if choice == "1":
+                    encrypt_file(file_path, output_path, password)
+                else:
+                    decrypt_file(file_path, output_path, password)
+            
+            elif choice in ["3", "4"]:
+                dir_path = input("Enter the directory path: ").strip()
+                output_path = input("Enter the output path: ").strip()
+                password = input("Enter the password: ").strip()
+                
+                if not all([dir_path, output_path, password]):
+                    print("Error: All fields are required")
+                    continue
+                
+                if choice == "3":
+                    encrypt_directory(dir_path, output_path, password)
+                else:
+                    decrypt_directory(dir_path, output_path, password)
+            
+            elif choice == "5":
+                output_path = input("Enter the output path for the key file: ").strip()
+                if not output_path:
+                    print("Error: Output path is required")
+                    continue
+                generate_key_file(output_path)
+            
+            else:
+                print("Invalid choice. Please enter a number between 1 and 6.")
+        
+        except KeyboardInterrupt:
+            print("\nOperation cancelled by user.")
+            break
+        except Exception as e:
+            print(f"An error occurred: {str(e)}")
+
+
 def main():
     parser = argparse.ArgumentParser(description="Secure File Encryption and Decryption Utility")
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("--encrypt", action="store_true", help="Encrypt a file or directory")
-    group.add_argument("--decrypt", action="store_true", help="Decrypt a file or directory")
+    group.add_argument("--encrypt", action="store_true", help="Encrypt a file")
+    group.add_argument("--decrypt", action="store_true", help="Decrypt a file")
     group.add_argument("--generate-key", action="store_true", help="Generate a secure key file")
-    parser.add_argument("--file", help="Path to the input file or directory")
-    parser.add_argument("--output", help="Path to the output file or directory")
+    group.add_argument("--interactive", action="store_true", help="Start interactive mode")
+    parser.add_argument("--file", help="Path to the input file")
+    parser.add_argument("--output", help="Path to the output file")
     parser.add_argument("--password", help="Encryption/Decryption password")
-    parser.add_argument("--key-file", help="Path to key file (optional)")
     
     args = parser.parse_args()
+    
+    if args.interactive:
+        interactive_mode()
+        return
     
     if args.generate_key:
         if not args.output:

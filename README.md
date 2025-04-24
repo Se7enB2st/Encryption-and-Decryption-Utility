@@ -7,6 +7,7 @@ This project is a Python-based utility designed to encrypt and decrypt files sec
 - **AES-256 Encryption**: Uses the Advanced Encryption Standard (AES) with a 256-bit key for strong encryption.
 - **Secure Key Management**: Generates and stores encryption keys securely.
 - **Command-Line Interface (CLI)**: Easily encrypt and decrypt files using simple commands.
+- **Interactive Mode**: User-friendly command-line interface for easy operation.
 - **Cross-Platform Support**: Works on Windows, Linux, and macOS.
 - **Directory Encryption**: Encrypt or decrypt entire directories with a single command.
 - **Password Strength Checker**: Ensures strong passwords are used for encryption.
@@ -31,7 +32,21 @@ pip install pycryptodome tqdm
 ```
 
 ## Usage
-### Basic File Operations
+### Interactive Mode
+Start the interactive mode with:
+```bash
+python encryptor.py --interactive
+```
+
+The interactive mode provides a menu-driven interface with the following options:
+1. Encrypt a file
+2. Decrypt a file
+3. Encrypt a directory
+4. Decrypt a directory
+5. Generate a key file
+6. Exit
+
+### Command Line Mode
 #### Encrypt a File
 ```bash
 python encryptor.py --encrypt --file confidential.txt --output encrypted.dat --password
